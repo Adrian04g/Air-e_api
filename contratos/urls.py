@@ -5,4 +5,6 @@ from . import views
 urlpatterns = [
     path('list/', views.ContratoViewSet.as_view(), name='contratos-list'),
     path('detail/<int:pk>/', views.ContratoViewSet.as_view(), name='contratos-detail'),
+    # contrato por cableoperador
+    
 ]
