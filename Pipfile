@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+mysqlclient = "*"
+django-select2 = "*"
+djangorestframework = "*"
+psycopg2-binary = "*"
+django-debug-toolbar = "*"
+djangorestframework-xml = "*"
+djangorestframework-csv = "*"
+djangorestframework-yaml = "*"
+bleach = "*"
+django-filter = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
+[dev-packages]
+
+[requires]
+python_version = "3.13"
