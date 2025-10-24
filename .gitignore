@@ -1,0 +1,8 @@
+# Archivos de caché y de configuración
+__pycache__/
+*.pyc
+.cache/
+.pytest_cache/
+.mypy_cache/
+.vscode/
+migrations/__pycache__
