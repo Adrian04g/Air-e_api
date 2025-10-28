@@ -1,3 +1,4 @@
+.env
 # Archivos de caché y de configuración
 __pycache__/
 *.pyc
