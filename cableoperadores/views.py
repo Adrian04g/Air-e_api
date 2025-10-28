@@ -26,18 +26,18 @@ class CableoperadoresDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Cableoperadores.objects.all()
     serializer_class = CableoperadoresSerializer
     permission_classes = [IsAuthenticated]
-
+# conexion a supabase
 from .serializers import CableoperadoresSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import CableoperadoresSerializer1
+from .serializers import CableoperadoresSerializerS
 from .supabase_client import supabase # Importa el cliente que creaste
 class CableoperadoresCreate(APIView):
     """
     Maneja peticiones GET (listar) y POST (crear) para la tabla 'libros' en Supabase.
     """
-    serializer_class = CableoperadoresSerializer1
+    serializer_class = CableoperadoresSerializerS
     permission_classes = [IsAuthenticated]
     # ------------------
     # MANEJAR GET (LISTAR)
@@ -54,7 +54,7 @@ class CableoperadoresCreate(APIView):
             book_data = res.data
             
             # Opcional: Serializa los datos para asegurar la estructura de salida
-            serializer = CableoperadoresSerializer1(data=book_data, many=True)
+            serializer = CableoperadoresSerializerS(data=book_data, many=True)
             serializer.is_valid(raise_exception=True)
             
             return Response(serializer.data)
@@ -68,7 +68,7 @@ class CableoperadoresCreate(APIView):
     # MANEJAR POST (CREAR)
     # ------------------
     def post(self, request, format=None):
-        serializer = CableoperadoresSerializer1(data=request.data)
+        serializer = CableoperadoresSerializerS(data=request.data)
         
         if serializer.is_valid():
             # Los datos ya están validados, se envían directamente a Supabase
@@ -93,7 +93,7 @@ class CableoperadorDetailView(APIView):
     Maneja peticiones GET (detalle), PUT (actualizar) y DELETE (eliminar) 
     para un cableoperador específico en Supabase.
     """
-    serializer_class = CableoperadoresSerializer1
+    serializer_class = CableoperadoresSerializerS
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, format=None):
@@ -135,7 +135,7 @@ class CableoperadorDetailView(APIView):
         """
         Actualiza parcialmente un cableoperador por su ID (pk).
         """
-        serializer = CableoperadoresSerializer1(data=request.data)
+        serializer = CableoperadoresSerializerS(data=request.data)
         # 1. Validar los datos entrantes (partial=True permite actualizaciones parciales)
         #    Solo validará los campos que el cliente envíe en el JSON.
         serializer = self.serializer_class(data=request.data, partial=True)

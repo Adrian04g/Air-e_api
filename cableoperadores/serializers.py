@@ -17,7 +17,7 @@ ESTADOS_CONTRATO = [
     ('En_Gestion' , 'En Gestion'),
     ('Sin_usos' , 'Sin Usos'),
 ]
-class CableoperadoresSerializer1(serializers.Serializer):
+class CableoperadoresSerializerS(serializers.Serializer):
     id = serializers.IntegerField(allow_null=True)
     nombre = serializers.CharField(max_length=100, required=True, allow_null=True)
     nombre_largo = serializers.CharField(max_length=255, required=False, allow_null=True)
