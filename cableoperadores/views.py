@@ -48,7 +48,7 @@ class CableoperadoresCreate(APIView):
             # Consulta la tabla 'libros' en Supabase
             res = supabase.table("Cableoperadores").select("*").execute()
             print("Obteniendo datos de Supabase...")
-            print(res)
+            
         
             # La respuesta de Supabase viene en un objeto con el campo 'data'
             book_data = res.data

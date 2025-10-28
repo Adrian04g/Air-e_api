@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'cableoperadores',
     'authentication',
     'contratos',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -52,8 +53,27 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # corsheaders
+    'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+# 🛑 CONFIGURACIÓN DE CORS
+# CORS_ALLOWED_ORIGINS = [
+#     "http://127.0.0.1:5500",  # El servidor live-server o VS Code
+#     "http://localhost:5500",  # Si usas localhost en lugar de 127.0.0.1
+#     # Añade cualquier otro frontend que uses, ej: "http://dominio-web.com"
+# ]
 
+# Si quieres permitir que cualquier origen acceda (solo recomendado para desarrollo/pruebas)
+CORS_ALLOW_ALL_ORIGINS = True
+# 🛑 AÑADE ESTA LÍNEA para el chequeo de seguridad CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:5500', # Permite que este origen haga POST/PUT/DELETE
+    'http://localhost:5500',
+    'https://adrian04g.github.io/Air-e-app/'
+    # Si tienes un subdominio o usas HTTPS, añádelo aquí
+    # 'https://*.example.com',
+]
 ROOT_URLCONF = 'API.urls'
 
 TEMPLATES = [
