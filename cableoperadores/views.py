@@ -45,16 +45,17 @@ class CableoperadoresCreate(APIView):
     def get(self, request, format=None):
         
         try:
-            # Consulta la tabla 'libros' en Supabase
-            res = supabase.table("Cableoperadores").select("*").execute()
+            # Consulta la tabla 'Cableoperadores' en Supabase
+            res = supabase.table("Cableoperadores").select("*").order("id", desc=False).execute()
+
             print("Obteniendo datos de Supabase...")
             
         
             # La respuesta de Supabase viene en un objeto con el campo 'data'
-            book_data = res.data
+            cableoperadores_data = res.data
             
             # Opcional: Serializa los datos para asegurar la estructura de salida
-            serializer = CableoperadoresSerializerS(data=book_data, many=True)
+            serializer = CableoperadoresSerializerS(data=cableoperadores_data, many=True)
             serializer.is_valid(raise_exception=True)
             
             return Response(serializer.data)

@@ -6,3 +6,4 @@ __pycache__/
 .mypy_cache/
 .vscode/
 migrations/__pycache__
+.env

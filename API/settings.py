@@ -108,12 +108,30 @@ WSGI_APPLICATION = 'API.wsgi.application'
 #         'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"}
 #     }
 # }
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+# DB_PASSWORD: str = os.environ.get("DB_PASSWORD")
+# DB_HOST: str = os.environ.get("DB_HOST")
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),       # Carga el nombre de la DB
+        'USER': os.getenv('DB_USER'),       # Carga el usuario
+        'PASSWORD': os.getenv('DB_PASSWORD'), # Carga la contraseña
+        'HOST': os.getenv('DB_HOST'),       # Carga el host
+        'PORT': os.getenv('DB_PORT'),       # Carga el puerto
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -186,7 +204,7 @@ REST_FRAMEWORK = {
         'user': '1000/day',
     },
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 2,
+    'PAGE_SIZE': 20,
 }
 
 from datetime import timedelta

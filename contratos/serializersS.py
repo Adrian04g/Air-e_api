@@ -70,3 +70,16 @@ class ContratoSerializerS(serializers.Serializer):
     fecha_radicacion = serializers.IntegerField(allow_null=True)
     tipo_fecha_radicacion = serializers.ChoiceField(choices=TIPO_FECHA_RADICACION_CONTRATO, allow_null=True)
     fecha_preliquidacion = serializers.DateField(allow_null=True)
+    
+# serializers para los modelos Nap, Cable, Caja_empalme y Reserva
+class NapSerializerS(serializers.Serializer):
+    pass
+
+class CableSerializerS(serializers.Serializer):
+    pass
+
+class CajaEmpalmeSerializerS(serializers.Serializer):
+    pass
+
+class ReservaSerializerS(serializers.Serializer):
+    pass
