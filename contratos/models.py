@@ -116,7 +116,6 @@ MONTO_ASEGURADO_POLIZA_RCE_CHOICES = [
 ]
 class Contratos(models.Model):
     cableoperador = models.ForeignKey(Cableoperadores, on_delete=models.PROTECT)
-    tipo_contrato = models.CharField(max_length=100, choices=CLASIFICACION, verbose_name="Tipo de Contrato")
     estado_contrato = models.CharField(max_length=100, choices=ESTADOS_CONTRATO, verbose_name="Estado de Contrato")
     duracion_anos = models.IntegerField(verbose_name="Duración en años", default=0)
     inicio_vigencia = models.DateField()

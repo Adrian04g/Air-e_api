@@ -38,3 +38,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        # Define los campos que quieres enviar al frontend
+        fields = ('id', 'username', 'email', 'first_name', 'last_name')

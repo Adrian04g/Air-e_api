@@ -7,7 +7,6 @@ name = "pypi"
 django = "*"
 mysqlclient = "*"
 django-select2 = "*"
-psycopg2-binary = "*"
 django-debug-toolbar = "*"
 djangorestframework-xml = "*"
 djangorestframework-csv = "*"
@@ -19,6 +18,8 @@ djangorestframework-simplejwt = "*"
 djangorestframework = "*"
 supabase = "*"
 python-dotenv = "*"
+django-cors-headers = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
