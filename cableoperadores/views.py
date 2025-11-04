@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import generics
+from rest_framework import generics, filters
 from .models import Cableoperadores
 from .serializers import CableoperadoresSerializer
 from django.contrib.auth.models import User
@@ -21,6 +21,15 @@ class CableoperadoresList(generics.ListCreateAPIView):
     queryset = Cableoperadores.objects.all()
     serializer_class = CableoperadoresSerializer
     permission_classes = [IsAuthenticated]
+    # Habilita búsqueda por texto en campos relevantes. Usar ?search=texto en la URL.
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        'nombre',
+        'ciudad',
+        'direccion',
+        'NIT',
+        'correo',
+    ]
 
 class CableoperadoresDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Cableoperadores.objects.all()
