@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from cableoperadores.serializers import *
 
 class CajaEmpalmeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,6 +28,7 @@ class ContratoSerializer(serializers.ModelSerializer):
     reserva = ReservaSerializer(required=False)
     caja_empalme = CajaEmpalmeSerializer(required=False)
     cable = CableSerializer(required=False)
+    cableoperador = CableoperadoresSerializer(read_only=True)
     class Meta:
         model = Contratos
         fields = '__all__'
