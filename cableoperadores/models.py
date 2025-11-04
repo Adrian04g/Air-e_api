@@ -29,6 +29,7 @@ class Cableoperadores(models.Model):
     CodigoInterno = models.BigIntegerField(null=True, blank=True, verbose_name='Codigo Interno')
     pais = models.CharField(max_length=100, null=True, blank=True)
     ciudad = models.CharField(max_length=100, null=True, blank=True)
+    departamento = models.CharField(max_length=100, null=True, blank=True)
     direccion = models.CharField(max_length=255, null=True, blank=True, verbose_name='Dirección')
     Representante = models.CharField(max_length=100, null=True, blank=True)
     telefono = models.BigIntegerField(verbose_name='Teléfono (Obligatorio)')

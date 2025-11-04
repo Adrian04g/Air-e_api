@@ -18,7 +18,8 @@ class DatosProtegidos(APIView):
         return Response({"mensaje": f"Hola {request.user.username}, tienes acceso."})
 
 class CableoperadoresList(generics.ListCreateAPIView):
-    queryset = Cableoperadores.objects.all()
+    # Devolver por defecto ordenado alfabéticamente por nombre_largo
+    queryset = Cableoperadores.objects.all().order_by('nombre_largo')
     serializer_class = CableoperadoresSerializer
     permission_classes = [IsAuthenticated]
     # Habilita búsqueda por texto en campos relevantes. Usar ?search=texto en la URL.

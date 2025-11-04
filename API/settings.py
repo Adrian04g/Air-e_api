@@ -122,6 +122,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),       # Carga el nombre de la DB
         'USER': os.getenv('DB_USER'),       # Carga el usuario
         'PASSWORD': os.getenv('DB_PASSWORD'), # Carga la contraseña
+        #'HOST': 'aws-1-us-east-1.pooler.supabase.com',       # Carga el host
         'HOST': os.getenv('DB_HOST'),       # Carga el host
         'PORT': os.getenv('DB_PORT'),       # Carga el puerto
     }
@@ -204,7 +205,7 @@ REST_FRAMEWORK = {
         'user': '1000/day',
     },
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 100,
 }
 
 from datetime import timedelta
