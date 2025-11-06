@@ -5,5 +5,10 @@ from . import views
 urlpatterns = [
     path('list/', views.CableoperadoresList.as_view(), name='cableoperadores-list'),
     path('detail/<int:pk>/', views.CableoperadoresDetail.as_view(), name='cableoperadores-detail'),
+    path(
+        '<int:cableoperador_pk>/notificaciones/', 
+        views.NotificacionListByCableoperador.as_view(), 
+        name='notificacion-by-cableoperador-list'
+    ),
     #path('login/', obtain_auth_token, name='api_token_auth'),
 ]

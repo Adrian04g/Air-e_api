@@ -1,10 +1,11 @@
 from django.shortcuts import render 
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated 
+from API.permissions import IsGroupMemberForWriteAndDelete
 from rest_framework.response import Response
 from rest_framework import generics, filters
-from .models import Cableoperadores
-from .serializers import CableoperadoresSerializer
+from .models import *
+from .serializers import *
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -35,4 +36,34 @@ class CableoperadoresList(generics.ListCreateAPIView):
 class CableoperadoresDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Cableoperadores.objects.all()
     serializer_class = CableoperadoresSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsGroupMemberForWriteAndDelete]
+    
+class NotificacionList(generics.ListCreateAPIView):
+    queryset = Notificacion.objects.all()
+    serializer_class = NotificacionSerializer
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+    search_fields = ['cableoperador__nombre']
+
+class NotificacionListByCableoperador(generics.ListCreateAPIView):
+    serializer_class = NotificacionSerializer
+
+    def get_queryset(self):
+        cableoperador_pk = self.kwargs['cableoperador_pk']
+        return Notificacion.objects.filter(cableoperador_id=cableoperador_pk)
+    def perform_create(self, serializer):
+        # 1. Obtener el ID del cableoperador desde la URL (kwargs)
+        cableoperador_id = self.kwargs.get('cableoperador_pk')
+        
+        # 2. Obtener la instancia del Cableoperador
+        try:
+            cableoperador_instance = Cableoperadores.objects.get(pk=cableoperador_id)
+        except Cableoperadores.DoesNotExist:
+            # Manejar si el ID en la URL no existe (esto generaría un 404/400)
+            raise serializers.ValidationError(
+                {'cableoperador_pk': 'El Cableoperador especificado en la URL no existe.'}
+            )
+
+        # 3. Guardar el objeto, forzando la clave foránea con la instancia de la URL.
+        # Esto asegura que la notificación se asigne correctamente, ignorando 
+        # (o sobrescribiendo) el 'cableoperador_id' del cuerpo si fuera diferente.
+        serializer.save(cableoperador=cableoperador_instance)

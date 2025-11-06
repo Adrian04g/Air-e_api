@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cableoperadores
+from .models import *
 from django.contrib.auth.models import User, Group
 
 
@@ -23,3 +23,10 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ['id', 'name']
+        
+class NotificacionSerializer(serializers.ModelSerializer):
+    cableoperador = CableoperadoresSerializer(read_only=True)
+    cableoperador_id = serializers.PrimaryKeyRelatedField(queryset=Cableoperadores.objects.all(), write_only=True, source='cableoperador')
+    class Meta:
+        model = Notificacion
+        fields = ['id', 'tipo_notificacion', 'fecha', 'cableoperador', 'cableoperador_id']

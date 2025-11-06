@@ -46,3 +46,17 @@ class Cableoperadores(models.Model):
         db_table = "cableoperadores"
     def __str__(self):
         return self.nombre
+    
+TIPO_NOTIFICACION = [
+    ('cobro_multa', 'Cobro de Multa'),
+    ('suspension_nuevos_accesos', 'Suspensión de Nuevos Accesos'),
+    ('cobro_prejuridico', 'Cobro Prejurídico'),
+    ('incumplimiento_pago_factura', 'Incumplimiento de Pago de Factura'),
+]
+class Notificacion(models.Model):
+    cableoperador = models.ForeignKey(Cableoperadores, on_delete=models.CASCADE)
+    tipo_notificacion = models.CharField(max_length=100, choices=TIPO_NOTIFICACION, default='cobro_multa')
+    fecha = models.DateField()
+
+    def __str__(self):
+        return f"Notificación de {self.cableoperador.nombre} - {self.fecha}"

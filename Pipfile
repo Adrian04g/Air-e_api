@@ -15,11 +15,11 @@ bleach = "*"
 django-filter = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
-djangorestframework = "*"
 supabase = "*"
 python-dotenv = "*"
 django-cors-headers = "*"
 psycopg2-binary = "*"
+djangorestframework = "*"
 
 [dev-packages]
 
