@@ -1,10 +1,80 @@
 .env
-# Archivos de caché y de configuración
+# Django
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
 *.pyc
+*.pyo
+*.pyd
+.Python
+db.sqlite3
+db.sqlite3-journal
+
+# Cache files
+*.cache
 .cache/
+*.sqlite
+*.db
+cache_file/
+**/cache_file/
+**/__pycache__/
+.sass-cache/
+*.log
+*.pot
+local_settings.py
+cache_files/
+*/cache_files/*
+*/*[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]*/
+b58c491ee925a1b691425438396cbdcd6d/
+*/b58c491ee925a1b691425438396cbdcd6d/*
+*/*[a-f0-9]{32}*/
+**/*.cache/
+
+# Directorios de caché
+.cache_files/
 .pytest_cache/
 .mypy_cache/
-.vscode/
-migrations/__pycache__
+.django_cache/
+.coverage
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Ambiente virtual
+venv/
+env/
+ENV/
 .env
+.venv
+.python-version
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+
+# Archivos de migración
+*/migrations/*.py
+!*/migrations/__init__.py
+migrations/__pycache__/
+
+# Archivos compilados y binarios
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+bin/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/

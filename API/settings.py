@@ -116,25 +116,57 @@ load_dotenv()
 
 # DB_PASSWORD: str = os.environ.get("DB_PASSWORD")
 # DB_HOST: str = os.environ.get("DB_HOST")
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DB_NAME'),       # Carga el nombre de la DB
-#         'USER': os.getenv('DB_USER'),       # Carga el usuario
-#         'PASSWORD': os.getenv('DB_PASSWORD'), # Carga la contraseña
-#         #'HOST': 'aws-1-us-east-1.pooler.supabase.com',       # Carga el host
-#         'HOST': os.getenv('DB_HOST'),       # Carga el host
-#         'PORT': os.getenv('DB_PORT'),       # Carga el puerto
-#     }
-# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),       # Carga el nombre de la DB
+        'USER': os.getenv('DB_USER'),       # Carga el usuario
+        'PASSWORD': os.getenv('DB_PASSWORD'), # Carga la contraseña
+        #'HOST': 'aws-1-us-east-1.pooler.supabase.com',       # Carga el host
+        'HOST': os.getenv('DB_HOST'),       # Carga el host
+        'PORT': os.getenv('DB_PORT'),       # Carga el puerto
+    }
+}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+CACHES = {
+    'default': {
+        # SOLUCIÓN AL ERROR: Usamos FileBasedCache para estabilidad. 
+        # IMPORTANTE: Ya no usamos delete_pattern en views.py, usamos cache.clear().
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        
+        # 🚨 FIX W003: Usar una ruta absoluta basada en BASE_DIR
+        # Esto crea una carpeta 'cache_files' dentro de la raíz de tu proyecto.
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), 
+        
+        # Opciones 
+        'TIMEOUT': 900, # 15 minutos (900 segundos)
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000, 
+        }
     }
 }
 
 
+# 🚨 Configuración opcional de Middleware de Caché 
+# (No necesario para el caching de vistas con @cache_page, pero bueno saberlo)
+
+# MIDDLEWARE = [
+#     'django.middleware.cache.UpdateCacheMiddleware',
+#     # ... otros middlewares
+#     'django.middleware.common.CommonMiddleware',
+#     # ... otros middlewares
+#     'django.middleware.cache.FetchFromCacheMiddleware',
+# ]
+
+# CACHE_MIDDLEWARE_SECONDS = 600 # 10 minutos para el middleware de sitio
+# CACHE_MIDDLEWARE_ALIAS = 'default'
+# CACHE_MIDDLEWARE_KEY_PREFIX = ''
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
