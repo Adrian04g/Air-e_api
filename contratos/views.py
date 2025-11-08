@@ -4,9 +4,10 @@ from .serializers import *
 from rest_framework import generics, filters
 from API.permissions import IsGroupMemberForWriteAndDelete
 # Importaciones para Caching
+# Importaciones para Caching
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.core.cache import cache # 🚨 IMPORTANTE para invalidar el caché
+from django.core.cache import cache # ¡IMPORTANTE para invalidar el caché!
 # Create your views here.
 
 # Tiempo de caché: 15 minutos (900 segundos)
@@ -29,7 +30,7 @@ def invalidate_list_cache(key_prefix):
     # o confiamos en la clave más simple generada por el decorador si conocemos la vista exacta.
     
     # Para simplicidad y evitar delete_pattern, usaremos un enfoque más directo:
-    cache.clear() # Intenta eliminar la clave base si existe
+    cache.clear(key_prefix) # Intenta eliminar la clave base si existe
 
 @method_decorator(cache_page(CACHE_TTL, key_prefix=CONTRATOS_LIST_CACHE_KEY), name='dispatch')
 class ContratoViewSet(generics.ListCreateAPIView):

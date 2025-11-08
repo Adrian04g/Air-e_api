@@ -22,7 +22,7 @@ ESTADOS_CONTRATO = [
 ]
 class Cableoperadores(models.Model):
     nombre = models.CharField(max_length=100, unique=True, verbose_name='Nombre (Obligatorio)')
-    nombre_largo = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    nombre_largo = models.CharField(max_length=255, null=True, blank=True, verbose_name='Nombre Largo')
     NIT = models.IntegerField(null=True, blank=True, unique=True)
     Digito_verificacion = models.IntegerField(null=True, blank=True, verbose_name='Digito de verificación')
     RegistroTic = models.BigIntegerField(null=True, blank=True, verbose_name='Registro TIC')

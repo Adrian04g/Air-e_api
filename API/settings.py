@@ -133,25 +133,17 @@ DATABASES = {
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# settings.py
 
 CACHES = {
-    'default': {
-        # SOLUCIÓN AL ERROR: Usamos FileBasedCache para estabilidad. 
-        # IMPORTANTE: Ya no usamos delete_pattern en views.py, usamos cache.clear().
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        
-        # 🚨 FIX W003: Usar una ruta absoluta basada en BASE_DIR
-        # Esto crea una carpeta 'cache_files' dentro de la raíz de tu proyecto.
-        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), 
-        
-        # Opciones 
-        'TIMEOUT': 900, # 15 minutos (900 segundos)
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000, 
-        }
+    "default": {
+        # 'LocMemCacheBackend' es específico de cada proceso.
+        # Funciona con 'runserver' porque es un solo proceso.
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        # Puedes darle un nombre para evitar conflictos si tienes varios proyectos
+        "LOCATION": "Air-e-api-cache",
     }
 }
-
 
 # 🚨 Configuración opcional de Middleware de Caché 
 # (No necesario para el caching de vistas con @cache_page, pero bueno saberlo)
