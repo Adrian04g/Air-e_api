@@ -6,7 +6,6 @@ class IsGroupMemberForWriteAndDelete(permissions.BasePermission):
     Permite acciones de escritura/borrado (PUT, PATCH, DELETE)
     solo a usuarios que pertenecen a los grupos requeridos.
     """
-    
     # Define el nombre(s) del grupo(s) requerido(s) para escribir/borrar
     required_groups = ['Administradores', 'Ejecutivas'] 
     
