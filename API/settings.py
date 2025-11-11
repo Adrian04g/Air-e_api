@@ -133,15 +133,18 @@ DATABASES = {
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# settings.py
 
 CACHES = {
     'default': {
         # SOLUCIÓN AL ERROR: Usamos FileBasedCache para estabilidad. 
         # IMPORTANTE: Ya no usamos delete_pattern en views.py, usamos cache.clear().
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        
         # 🚨 FIX W003: Usar una ruta absoluta basada en BASE_DIR
         # Esto crea una carpeta 'cache_files' dentro de la raíz de tu proyecto.
         'LOCATION': os.path.join(BASE_DIR, 'cache_files'), 
+        
         # Opciones 
         'TIMEOUT': 900, # 15 minutos (900 segundos)
         'OPTIONS': {
