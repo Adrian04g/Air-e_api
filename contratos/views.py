@@ -16,7 +16,7 @@ CONTRATOS_LIST_CACHE_KEY = 'contratos_list_cache'
 
 # Función auxiliar para invalidar la primera página de la lista (sustituye a delete_pattern)
 def invalidate_list_cache(key_prefix):
-    cache.clear(key_prefix) # Intenta eliminar la clave base si existe
+    cache.clear() # Intenta eliminar la clave base si existe
 
 @method_decorator(cache_page(CACHE_TTL, key_prefix=CONTRATOS_LIST_CACHE_KEY), name='dispatch')
 class ContratoViewSet(generics.ListCreateAPIView):
@@ -24,7 +24,7 @@ class ContratoViewSet(generics.ListCreateAPIView):
     serializer_class = ContratoSerializer
     permission_classes = [IsGroupMemberForWriteAndDelete]
     # Habilita búsqueda por texto en campos relevantes. Usar ?search=texto en la URL.
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [filters.SearchFilter,  filters.OrderingFilter]
     search_fields = [
         'cableoperador__nombre',
         'estado_contrato',
