@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from cableoperadores.serializers import CableoperadoresSerializer
 from django.db.models import Sum
 
 class RegistroPagoSerializer(serializers.ModelSerializer):
@@ -11,7 +12,8 @@ class FacturaSerializer(serializers.ModelSerializer):
     # Campo que calcula la suma de pagos (solo lectura)
     monto_pagado = serializers.SerializerMethodField()
     estado = serializers.SerializerMethodField()
-    cableoperador = serializers.CharField(source='contratos.cableoperador.nombre', read_only=True)
+    #cableoperador = serializers.CharField(source='contratos.cableoperador.nombre', read_only=True)
+    cableoperador = CableoperadoresSerializer(source='contratos.cableoperador', read_only=True)
     # Mostrar todos los registros de pago anidados
     pagos = RegistroPagoSerializer(many=True, read_only=True) 
     monto_pendiente = serializers.SerializerMethodField()

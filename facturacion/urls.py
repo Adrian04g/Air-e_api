@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path('', views.FacturaListCreateView.as_view(), name='factura-list-create'),
     path('<int:pk>/', views.FacturaDetailView.as_view(), name='factura-detail'),
-    #path('facturas/por-cableoperador/', views.FacturaByCableoperadorView.as_view(), name='factura-by-cableoperador'),
+    #path('por-cableoperador/', views.FacturaByCableoperadorView.as_view(), name='factura-by-cableoperador'),
     
     # Registros de Pago
     path('pagos/', views.RegistroPagoListCreateView.as_view(), name='pago-list-create'),

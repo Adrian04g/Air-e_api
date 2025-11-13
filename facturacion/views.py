@@ -7,29 +7,39 @@ from rest_framework import generics, filters
 
 # --- FACTURAS ---
 class FacturaListCreateView(generics.ListCreateAPIView):
-    queryset = Facturacion.objects.all().order_by('-Fecha_facturacion')
     serializer_class = FacturaSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['Num_factura', 'contratos__cableoperador__nombre']
+    search_fields = ['contratos__cableoperador__id']
     
+    def get_queryset(self):
+        """
+        Sobrescribe el queryset para filtrar por cableoperador si se provee el parámetro.
+        """
+        queryset = Facturacion.objects.all().order_by('-Fecha_facturacion')
+        cableoperador_id = self.request.query_params.get('cableoperador', None)
+        if cableoperador_id is not None:
+            queryset = queryset.filter(contratos__cableoperador__id=cableoperador_id)
+        return queryset
 
 class FacturaDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Facturacion.objects.all()
     serializer_class = FacturaSerializer
 
-# class FacturaByCableoperadorView(generics.ListAPIView):
-#     """Obtener facturas filtradas por cableoperador"""
-#     serializer_class = FacturaSerializer
-#     filter_backends = [filters.OrderingFilter]
-#     ordering_fields = ['Fecha_facturacion']
+class FacturaByCableoperadorView(generics.ListAPIView):
+    """Obtener facturas filtradas por cableoperador"""
+    serializer_class = FacturaSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['Fecha_facturacion']
 
-#     def get_queryset(self):
-#         cableoperador_id = self.request.query_params.get('cableoperador_id')
-#         if cableoperador_id:
-#             return Facturacion.objects.filter(
-#                 contratos__cableoperador__id=cableoperador_id
-#             )
-#         return Facturacion.objects.none()
+    # def get_queryset(self):
+    #     cableoperador_id = self.request.query_params.get('cableoperador_id')
+    #     if cableoperador_id:
+    #         return Facturacion.objects.filter(
+    #             cableoperador=cableoperador_id
+    #         )
+    #         # Filtra a través de la relación: Facturacion -> contratos -> cableoperador
+    #         return Facturacion.objects.filter(contratos__cableoperador__id=cableoperador_id)
+    #     return Facturacion.objects.none()
 
 # --- REGISTROS DE PAGO ---
 class RegistroPagoListCreateView(generics.ListCreateAPIView):
