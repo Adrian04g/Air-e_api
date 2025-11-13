@@ -144,7 +144,7 @@ CACHES = {
         
         # 🚨 FIX W003: Usar una ruta absoluta basada en BASE_DIR
         # Esto crea una carpeta 'cache_files' dentro de la raíz de tu proyecto.
-        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), 
+        'LOCATION': '/tmp/django_cache',
         
         # Opciones 
         'TIMEOUT': 900, # 15 minutos (900 segundos)
@@ -236,7 +236,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '100/day',
-        'user': '1000/day',
+        'user': '2000/day',
     },
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 49,

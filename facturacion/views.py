@@ -7,7 +7,7 @@ from rest_framework import generics, filters
 
 # --- FACTURAS ---
 class FacturaListCreateView(generics.ListCreateAPIView):
-    queryset = Facturacion.objects.all()
+    queryset = Facturacion.objects.all().order_by('-Fecha_facturacion')
     serializer_class = FacturaSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['Num_factura', 'contratos__cableoperador__nombre']

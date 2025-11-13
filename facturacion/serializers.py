@@ -10,7 +10,8 @@ from decimal import Decimal
 class FacturaSerializer(serializers.ModelSerializer):
     # Campo que calcula la suma de pagos (solo lectura)
     monto_pagado = serializers.SerializerMethodField()
-    
+    estado = serializers.SerializerMethodField()
+    cableoperador = serializers.CharField(source='contratos.cableoperador.nombre', read_only=True)
     # Mostrar todos los registros de pago anidados
     pagos = RegistroPagoSerializer(many=True, read_only=True) 
     monto_pendiente = serializers.SerializerMethodField()
@@ -34,3 +35,15 @@ class FacturaSerializer(serializers.ModelSerializer):
         valor_facturado_dec = Decimal(str(valor_facturado)) if valor_facturado is not None else Decimal('0.00')
         pendiente = valor_facturado_dec - total_pagos
         return float(round(pendiente, 2))
+    def get_estado(self, obj):
+        monto_pagado = self.get_monto_pagado(obj)
+        valor_facturado = obj.Valor_facturado_iva
+
+        if monto_pagado == 0:
+            return 'Pendiente'
+        elif 0 < monto_pagado < valor_facturado:
+            return 'PagadaParcial'
+        elif monto_pagado >= valor_facturado:
+            return 'Pagada'
+        else:
+            return obj.estado  # Retorna el estado original si no coincide con ninguna condición
