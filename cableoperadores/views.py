@@ -26,12 +26,19 @@ class DatosProtegidos(APIView):
     permission_classes = [IsAuthenticated] # Solo usuarios autenticados pueden acceder
     def get(self, request):
         return Response({"mensaje": f"Hola {request.user.username}, tienes acceso."})
+
+class CustomLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 50 # Por defecto 5 elementos por página (cambiado de 20)
+    #max_limit = 50     # Límite máximo que el cliente puede solicitar
+    limit_query_param = 'tamaño' # Cambia el nombre del parámetro de consulta (ej. ?offset=0&tamaño=15)
+    offset_query_param = 'desplazamiento'
     
 class CableoperadoresList(generics.ListCreateAPIView):
     # Devolver por defecto ordenado alfabéticamente por nombre_largo
     queryset = Cableoperadores.objects.all().order_by('nombre_largo')
     serializer_class = CableoperadoresSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = CustomLimitOffsetPagination
     # Habilita búsqueda por texto en campos relevantes. Usar ?search=texto en la URL.
     filter_backends = [filters.SearchFilter]
     search_fields = [
@@ -42,26 +49,32 @@ class CableoperadoresList(generics.ListCreateAPIView):
         'correo',
     ]
     
+    def get_cache_key(self, request):
+        """Genera una clave de caché única basada en parámetros de paginación y búsqueda"""
+        limit = request.query_params.get('tamaño', 50)
+        offset = request.query_params.get('desplazamiento', 0)
+        search = request.query_params.get('search', '')
+        return f"{CABLEOPERADORES_LIST_CACHE_KEY}:limit={limit}:offset={offset}:search={search}"
+    
     # 🚨 NUEVO: Sobrescribimos el método 'list' para manejar la caché manualmente
     def list(self, request, *args, **kwargs):
-        # 1. Intentar obtener la lista de la caché
-        # Usamos una clave simple. Si usas paginación/búsqueda, la clave debe ser más compleja.
-        # Por ahora, esta clave simple funcionará para la lista principal.
-        cached_data = cache.get(CABLEOPERADORES_LIST_CACHE_KEY)
+        # 1. Generar una clave de caché única basada en los parámetros
+        cache_key = self.get_cache_key(request)
+        cached_data = cache.get(cache_key)
         
         if cached_data:
-            # print("DEBUG: Devolviendo lista desde CACHÉ")
+            # print(f"DEBUG: Devolviendo lista desde CACHÉ con clave: {cache_key}")
             # Si encontramos datos en caché, los devolvemos directamente
             return Response(cached_data)
         
-        # print("DEBUG: Generando lista y guardando en CACHÉ")
+        # print(f"DEBUG: Generando lista y guardando en CACHÉ con clave: {cache_key}")
         # 2. Si no hay caché, ejecutamos la lógica normal de ListCreateAPIView
         response = super().list(request, *args, **kwargs)
         
         # 3. Guardar la respuesta (los datos) en la caché antes de devolverla
         # Solo cacheamos si la respuesta fue exitosa
         if response.status_code == 200:
-            cache.set(CABLEOPERADORES_LIST_CACHE_KEY, response.data, CACHE_TTL)
+            cache.set(cache_key, response.data, CACHE_TTL)
             
         # 4. Devolver la respuesta generada
         return response
@@ -89,12 +102,6 @@ class CableoperadoresDetail(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         # ¡CORRECTO! Esta llamada es la que borra la caché.
         invalidate_list_cache(CABLEOPERADORES_LIST_CACHE_KEY)
-
-class CustomLimitOffsetPagination(LimitOffsetPagination):
-    default_limit = 5 # Por defecto 5 elementos por página (cambiado de 20)
-    #max_limit = 50     # Límite máximo que el cliente puede solicitar
-    limit_query_param = 'tamaño' # Cambia el nombre del parámetro de consulta (ej. ?offset=0&tamaño=15)
-    offset_query_param = 'desplazamiento'
 
 class NotificacionList(generics.ListCreateAPIView):
     queryset = Notificacion.objects.all()

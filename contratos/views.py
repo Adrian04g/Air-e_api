@@ -2,8 +2,8 @@ from django.shortcuts import render
 from .models import *
 from .serializers import *
 from rest_framework import generics, filters
+from rest_framework.response import Response
 from API.permissions import IsGroupMemberForWriteAndDelete
-# Importaciones para Caching
 # Importaciones para Caching
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -18,7 +18,6 @@ CONTRATOS_LIST_CACHE_KEY = 'contratos_list_cache'
 def invalidate_list_cache(key_prefix):
     cache.clear() # Intenta eliminar la clave base si existe
 
-@method_decorator(cache_page(CACHE_TTL, key_prefix=CONTRATOS_LIST_CACHE_KEY), name='dispatch')
 class ContratoViewSet(generics.ListCreateAPIView):
     queryset = Contratos.objects.all()
     serializer_class = ContratoSerializer
@@ -31,6 +30,35 @@ class ContratoViewSet(generics.ListCreateAPIView):
         'tomador',
         'aseguradora',
     ]
+    
+    def get_cache_key(self, request):
+        """Genera una clave de caché única basada en parámetros de paginación y búsqueda"""
+        limit = request.query_params.get('limit', 20)
+        offset = request.query_params.get('offset', 0)
+        search = request.query_params.get('search', '')
+        ordering = request.query_params.get('ordering', '')
+        return f"{CONTRATOS_LIST_CACHE_KEY}:limit={limit}:offset={offset}:search={search}:ordering={ordering}"
+    
+    def list(self, request, *args, **kwargs):
+        # 1. Generar una clave de caché única basada en los parámetros
+        cache_key = self.get_cache_key(request)
+        cached_data = cache.get(cache_key)
+        
+        if cached_data:
+            # Si encontramos datos en caché, los devolvemos directamente
+            return Response(cached_data)
+        
+        # 2. Si no hay caché, ejecutamos la lógica normal de ListCreateAPIView
+        response = super().list(request, *args, **kwargs)
+        
+        # 3. Guardar la respuesta (los datos) en la caché antes de devolverla
+        # Solo cacheamos si la respuesta fue exitosa
+        if response.status_code == 200:
+            cache.set(cache_key, response.data, CACHE_TTL)
+            
+        # 4. Devolver la respuesta generada
+        return response
+    
     # 🚨 Invalidar caché al crear un nuevo contrato
     def perform_create(self, serializer):
         instance = serializer.save()
