@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'cableoperadores',
-    'authentication',
     'contratos',
+    'facturacion',
+    'authentication',
     'corsheaders',
 ]
 
@@ -83,6 +84,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -136,14 +138,23 @@ DATABASES = {
 # settings.py
 
 CACHES = {
-    "default": {
-        # 'LocMemCacheBackend' es específico de cada proceso.
-        # Funciona con 'runserver' porque es un solo proceso.
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        # Puedes darle un nombre para evitar conflictos si tienes varios proyectos
-        "LOCATION": "Air-e-api-cache",
+    'default': {
+        # SOLUCIÓN AL ERROR: Usamos FileBasedCache para estabilidad. 
+        # IMPORTANTE: Ya no usamos delete_pattern en views.py, usamos cache.clear().
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        
+        # 🚨 FIX W003: Usar una ruta absoluta basada en BASE_DIR
+        # Esto crea una carpeta 'cache_files' dentro de la raíz de tu proyecto.
+        'LOCATION': os.path.join(BASE_DIR, 'cache'),
+        
+        # Opciones 
+        'TIMEOUT': 900, # 15 minutos (900 segundos)
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000, 
+        }
     }
 }
+
 
 # 🚨 Configuración opcional de Middleware de Caché 
 # (No necesario para el caching de vistas con @cache_page, pero bueno saberlo)
@@ -226,7 +237,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '100/day',
-        'user': '1000/day',
+        'user': '2000/day',
     },
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 49,

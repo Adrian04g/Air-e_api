@@ -24,9 +24,10 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/cableoperadores/', include('cableoperadores.urls')),
     path('api/', include('rest_framework.urls')),
+    path('api/cableoperadores/', include('cableoperadores.urls')),
     path('api/contratos/', include('contratos.urls')),
+    path('api/facturas/', include('facturacion.urls')),
     # JWT URLs
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

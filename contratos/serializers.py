@@ -181,7 +181,7 @@ class ContratoSerializer(serializers.ModelSerializer):
 
 
 class CableoperadorSerializer(serializers.ModelSerializer):
-    
+    cableoperador = CableoperadoresSerializer(read_only=True)
     class Meta:
         model = Cableoperadores
         fields = '__all__'
