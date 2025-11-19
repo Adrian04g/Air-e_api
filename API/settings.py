@@ -118,21 +118,6 @@ load_dotenv()
 
 # DB_PASSWORD: str = os.environ.get("DB_PASSWORD")
 # DB_HOST: str = os.environ.get("DB_HOST")
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),       # Carga el nombre de la DB
-        'USER': os.getenv('DB_USER'),       # Carga el usuario
-        'PASSWORD': os.getenv('DB_PASSWORD'), # Carga la contraseña
-        #'HOST': 'aws-1-us-east-1.pooler.supabase.com',       # Carga el host
-        'HOST': os.getenv('DB_HOST'),       # Carga el host
-        'PORT': os.getenv('DB_PORT'),       # Carga el puerto
-        'OPTIONS': {
-            # Supabase generalmente requiere SSL
-            'sslmode': 'require', 
-        },
-    }
-}
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -142,6 +127,10 @@ DATABASES = {
 #         #'HOST': 'aws-1-us-east-1.pooler.supabase.com',       # Carga el host
 #         'HOST': os.getenv('DB_HOST'),       # Carga el host
 #         'PORT': os.getenv('DB_PORT'),       # Carga el puerto
+#         'OPTIONS': {
+#             # Supabase generalmente requiere SSL
+#             'sslmode': 'require', 
+#         },
 #     }
 # }
 DATABASES = {
