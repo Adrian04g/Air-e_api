@@ -127,6 +127,10 @@ DATABASES = {
         #'HOST': 'aws-1-us-east-1.pooler.supabase.com',       # Carga el host
         'HOST': os.getenv('DB_HOST'),       # Carga el host
         'PORT': os.getenv('DB_PORT'),       # Carga el puerto
+        'OPTIONS': {
+            # Supabase generalmente requiere SSL
+            'sslmode': 'require', 
+        },
     }
 }
 # DATABASES = {
