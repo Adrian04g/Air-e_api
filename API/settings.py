@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'cableoperadores',
     'contratos',
     'facturacion',
+    'proyectos',
     'authentication',
     'corsheaders',
 ]
@@ -116,15 +117,12 @@ from dotenv import load_dotenv
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
-# DB_PASSWORD: str = os.environ.get("DB_PASSWORD")
-# DB_HOST: str = os.environ.get("DB_HOST")
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': os.getenv('DB_NAME'),       # Carga el nombre de la DB
 #         'USER': os.getenv('DB_USER'),       # Carga el usuario
 #         'PASSWORD': os.getenv('DB_PASSWORD'), # Carga la contraseña
-#         #'HOST': 'aws-1-us-east-1.pooler.supabase.com',       # Carga el host
 #         'HOST': os.getenv('DB_HOST'),       # Carga el host
 #         'PORT': os.getenv('DB_PORT'),       # Carga el puerto
 #         'OPTIONS': {
@@ -139,7 +137,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-# settings.py
 
 CACHES = {
     'default': {

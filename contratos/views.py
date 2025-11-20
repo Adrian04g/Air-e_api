@@ -80,3 +80,7 @@ class ContratoDetailViewSet(generics.RetrieveUpdateDestroyAPIView):
         instance.delete()
         # FIX: Invalidamos la clave base de la lista al eliminar
         invalidate_list_cache(CONTRATOS_LIST_CACHE_KEY)
+        
+class NapView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Nap.objects.all()
+    serializer_class = NapSerializer

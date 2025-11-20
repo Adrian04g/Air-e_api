@@ -5,4 +5,5 @@ from . import views
 urlpatterns = [
     path('list/', views.ContratoViewSet.as_view(), name='contratos-list'),
     path('list/<int:pk>/', views.ContratoDetailViewSet.as_view(), name='contratos-detail'),
+    path('nap/<int:pk>/', views.NapView.as_view(), name='nap')
 ]
