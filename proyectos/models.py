@@ -2,24 +2,45 @@ from django.db import models
 from cableoperadores.models import Cableoperadores
 # Create your models here.
 # Tipo de ingreso del proyecto
-
 class AlturaInicialPoste(models.Model):
-    proyecto = models.ForeignKey('IngresoProyecto', on_delete=models.CASCADE, primary_key=True, verbose_name="Proyecto")
-    tipo8 = models.IntegerField(verbose_name="Ingrese cantidad de Poste de Altura 8", default=0)
-    tipo9 = models.IntegerField(verbose_name="Ingrese cantidad de Poste de Altura 9", default=0)
-    tipo10 = models.IntegerField(verbose_name="Ingrese cantidad de Poste de Altura 10", default=0)
-    tipo11 = models.IntegerField(verbose_name="Ingrese cantidad de Poste de Altura 11", default=0)
-    tipo12 = models.IntegerField(verbose_name="Ingrese cantidad de Poste de Altura 12", default=0)
-    tipo14 = models.IntegerField(verbose_name="Ingrese cantidad de Poste de Altura 14", default=0)
-    tipo16 = models.IntegerField(verbose_name="Ingrese cantidad de Poste de Altura 16", default=0)
+    proyecto = models.OneToOneField(
+        'IngresoProyecto',
+        on_delete=models.CASCADE,
+        primary_key=True,
+        verbose_name="Proyecto"
+    )  # , related_name="altura_inicial_poste")
+    tipo8 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 8", default=0
+    )
+    tipo9 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 9", default=0
+    )
+    tipo10 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 10", default=0
+    )
+    tipo11 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 11", default=0
+    )
+    tipo12 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 12", default=0
+    )
+    tipo14 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 14", default=0
+    )
+    tipo16 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 16", default=0
+    )
 INGRESO = [
-        ('Viabilidad', 'Viabilidad'),
-        ('Desmonte', 'Desmonte'),
-        ('Legalizacion', 'Legalizacion'),
-    ]
+    ('Viabilidad', 'Viabilidad'),
+    ('Desmonte', 'Desmonte'),
+    ('Legalizacion', 'Legalizacion'),
+]
 ESTADO = [
         ('En_proceso', 'En proceso'),
-        ('Cancelado', 'Cancelado'),
+        ('cancelado', 'Cancelado'),
+        ('rechazado_GD', 'Rechazado GD'),
+        ('incluir_contrato', 'Incluir en Contrato'),
+        ('negado', 'Negado'),
 ]
 # Choices para departamentos
 DEPARTAMENTOS = [
@@ -30,7 +51,8 @@ DEPARTAMENTOS = [
 class IngresoProyecto(models.Model):
     cableoperador = models.ForeignKey(Cableoperadores, on_delete=models.CASCADE,verbose_name="Cableoperador")
     OT_PRST = models.CharField(max_length=100, verbose_name="OT PRST", null=True, blank=True)
-    nombre = models.CharField(max_length=100, primary_key=True)
+    OT_AIRE = models.CharField(max_length=100, verbose_name="OT Air-e", primary_key=True)
+    nombre = models.CharField(max_length=100)
     # 
     rechazado_GD = models.BooleanField(default=False, verbose_name="¿Rechazado GD?")
     cancelado = models.BooleanField(default=False, verbose_name="¿Cancelado?")
@@ -51,14 +73,6 @@ class IngresoProyecto(models.Model):
     fecha_entrega_coordinador = models.DateField(null=True, blank=True, auto_now_add=True)
     estado_ingreso = models.CharField(max_length=100, choices=ESTADO, default='En_proceso', verbose_name="Registro de estado del proyecto", null=True, blank=True)
     observaciones = models.TextField(max_length=1000, null=True, blank=True)
-    # Alturas iniciales
-    altura_inicial_poste = models.OneToOneField(
-        AlturaInicialPoste,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name="Altura Inicial de los Postes"
-    )
     class Meta:
         db_table = "ingreso_proyecto"
     def __str__(self):
@@ -69,7 +83,8 @@ class Cable(models.Model):
     proyecto = models.OneToOneField(
         'Proyectos', # Apunta al modelo Proyectos
         on_delete=models.CASCADE, 
-        primary_key=True, # Hace que este campo sea la PK, forzando la unicidad
+        primary_key=True,
+        to_field='datos_ingreso',
         verbose_name="Proyecto Asociado"
     )
     tipo8 = models.PositiveIntegerField(verbose_name="8 metros", default=0)
@@ -88,7 +103,8 @@ class Caja_empalme(models.Model):
     proyecto = models.OneToOneField(
         'Proyectos', 
         on_delete=models.CASCADE, 
-        primary_key=True,
+        primary_key=True, 
+        to_field='datos_ingreso',
         verbose_name="Proyecto Asociado"
     )
     tipo8 = models.PositiveIntegerField(verbose_name="8 metros", default=0)
@@ -107,7 +123,8 @@ class Reserva(models.Model):
     proyecto = models.OneToOneField(
         'Proyectos', 
         on_delete=models.CASCADE, 
-        primary_key=True,
+        primary_key=True, 
+        to_field='datos_ingreso',
         verbose_name="Proyecto Asociado"
     )
     tipo8 = models.PositiveIntegerField(verbose_name="8 metros", default=0)
@@ -127,7 +144,8 @@ class Nap(models.Model):
     proyecto = models.OneToOneField(
         'Proyectos', 
         on_delete=models.CASCADE, 
-        primary_key=True,
+        primary_key=True, 
+        to_field='datos_ingreso',
         verbose_name="Proyecto Asociado"
     )
     tip8 = models.PositiveIntegerField(verbose_name="8 metros", default=0)
@@ -141,9 +159,8 @@ class Nap(models.Model):
         db_table = "Naps_proyectos"
 
 class Proyectos(models.Model):
-    datos_ingreso = models.ForeignKey(IngresoProyecto, on_delete=models.CASCADE)
+    datos_ingreso = models.ForeignKey(IngresoProyecto, on_delete=models.CASCADE, to_field='OT_AIRE', db_column='datos_ingreso_id', primary_key=True)
     estado_actual = models.CharField(max_length=100)
-    OT_AIRE = models.CharField(max_length=100)
     fecha_inspeccion = models.DateField()
     fecha_analisis_inspeccion = models.DateField()
     class Meta:

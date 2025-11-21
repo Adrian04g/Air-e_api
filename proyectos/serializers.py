@@ -3,7 +3,7 @@ from .models import *
 from django.db import transaction
 from cableoperadores.serializers import CableoperadoresSerializer
 from cableoperadores.models import Cableoperadores
-
+from datetime import datetime
 
 class CajaEmpalmeSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -45,27 +45,29 @@ class IngresoProyectoSerializer(serializers.ModelSerializer):
 	cableoperador_id = serializers.PrimaryKeyRelatedField(
 		source='cableoperador',
 		queryset=Cableoperadores.objects.all(),
-		write_only=True,
-		required=False,
-		allow_null=True,
+		write_only=True, # Solo para escritura
+		required=True,   # Hacerlo obligatorio para POST/PUT
+		allow_null=False # No permitir que sea nulo
 	)
 	# Altura inicial del poste (lectura mediante método, escritura directa)
 	altura_inicial_poste = serializers.SerializerMethodField()
 	# Campo de escritura para altura_inicial_poste
 	altura_inicial_poste_input = AlturaInicialPosteSerializer(write_only=True, required=False, allow_null=True, source='altura_inicial_poste')
-    
+	# Hacemos que OT_AIRE y nombre no sean requeridos en la entrada, ya que se generan en el create.
+	OT_AIRE = serializers.CharField(required=False, allow_blank=True)
+
 	class Meta:
 		model = IngresoProyecto
-		fields = ['cableoperador', 'cableoperador_id', 'OT_PRST', 'nombre', 'rechazado_GD', 
+		fields = ['cableoperador', 'cableoperador_id', 'OT_PRST','OT_AIRE', 'nombre', 'rechazado_GD', 
 		          'cancelado', 'incluir_contrato', 'negado', 'TipoIngreso', 'departamento',
 		          'municipio', 'barrio', 'fecha_inicio', 'fecha_fin', 'fecha_confirmacion_fin',
-		          'fecha_radicacion_prst', 'fecha_revision_doc', 'fecha_entrega_coordinador',
-		          'estado_ingreso', 'observaciones', 'altura_inicial_poste', 'altura_inicial_poste_input']
+		          'fecha_radicacion_prst', 'fecha_revision_doc', 'fecha_entrega_coordinador','estado_ingreso',
+		           'observaciones', 'altura_inicial_poste', 'altura_inicial_poste_input']
 
 	def get_altura_inicial_poste(self, obj):
 		"""Lectura: retorna objeto con datos o crea si no existe"""
 		try:
-			alp = obj.altura_inicial_poste
+			alp = obj.alturainicialposte
 			if alp:
 				return {
 					'tipo8': alp.tipo8,
@@ -93,6 +95,52 @@ class IngresoProyectoSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 		altura_data = validated_data.pop('altura_inicial_poste', None)
+
+		# --- 1. LÓGICA PARA DETERMINAR EL ESTADO DE INGRESO ---
+		estados = []
+		if validated_data.get('rechazado_GD', False):
+			estados.append('rechazado_GD')
+		if validated_data.get('cancelado', False):
+			estados.append('cancelado')
+		if validated_data.get('incluir_contrato', False):
+			estados.append('incluir_contrato')
+		if validated_data.get('negado', False):
+			estados.append('negado')
+		
+		# Si la lista está vacía, el estado es 'En_proceso'
+		estado_final = ', '.join(estados) if estados else 'En_proceso'
+		validated_data['estado_ingreso'] = estado_final
+		# --- 2. GENERACIÓN DE OT_AIRE ---
+		# Obtener las variables necesarias (asumiendo que están disponibles en validated_data o relacionadas)
+		departamento = validated_data.get('departamento')
+		cableoperador_instance = validated_data.get('cableoperador') # Ya es una instancia por el PrimaryKeyRelatedField
+
+		# Genera el valor de la OT_AIRE si aún no existe
+		if not validated_data.get('OT_AIRE'):
+			fecha_actual = datetime.now().date()
+			nombre = cableoperador_instance.nombre.replace(" ", "_")
+			
+			prefix = ''
+			if departamento == 'atlantico':
+				prefix = 'ATL'
+			elif departamento == 'magdalena':
+				prefix = 'MAG'
+			else:
+				prefix = 'LA'
+				
+			year = fecha_actual.year
+			mes = fecha_actual.strftime('%B')[0:3].upper()
+			
+			# El conteo debe ser global para el cableoperador, no solo para los ya creados
+			# Asegúrate de que el modelo IngresoProyecto esté importado.
+			conteo = IngresoProyecto.objects.filter(cableoperador=cableoperador_instance).count() + 1
+			
+			# Asignar el valor generado a los datos validados para que se guarde
+			validated_data['OT_AIRE'] = f"{nombre}_{prefix}_{mes}.{year}_{conteo}"
+		# --- FIN GENERACIÓN OT_AIRE ---
+		# --- 2 Creación del IngresoProyecto ---
+		
+
 		with transaction.atomic():
 			ingreso = IngresoProyecto.objects.create(**validated_data)
 			# Usar get_or_create para evitar IntegrityError si ya existe
@@ -110,6 +158,22 @@ class IngresoProyectoSerializer(serializers.ModelSerializer):
 		altura_data = validated_data.pop('altura_inicial_poste', None)
 
 		# Actualizar campos del IngresoProyecto
+		# --- LÓGICA PARA DETERMINAR EL ESTADO DE INGRESO EN LA ACTUALIZACIÓN ---
+		# Recopilar los estados actuales de la instancia y los nuevos de validated_data
+		estados = []
+		# Usar .get() para obtener el valor de validated_data, si no existe, usar el de la instancia
+		if validated_data.get('rechazado_GD', instance.rechazado_GD):
+			estados.append('rechazado_GD')
+		if validated_data.get('cancelado', instance.cancelado):
+			estados.append('cancelado')
+		if validated_data.get('incluir_contrato', instance.incluir_contrato):
+			estados.append('incluir_contrato')
+		if validated_data.get('negado', instance.negado):
+			estados.append('negado')
+		
+		# Si la lista está vacía, el estado es 'En_proceso'
+		estado_final = ', '.join(estados) if estados else 'En_proceso'
+		validated_data['estado_ingreso'] = estado_final
 		# Solo actualizar si el campo viene en validated_data (evita sobrescribir con None)
 		for attr, value in validated_data.items():
 			# Nunca sobrescribir cableoperador si no se envía (solo actualizar si viene)
@@ -246,5 +310,3 @@ class ProyectosSerializer(serializers.ModelSerializer):
 					'fecha_analisis_inspeccion': 'La fecha de análisis no puede ser anterior a la fecha de inspección.'
 				})
 		return data
-
-
