@@ -167,3 +167,19 @@ class Proyectos(models.Model):
         db_table = "Proyectos"
     def __str__(self):
         return f"Proyecto {self.datos_ingreso.nombre}"
+    
+# class Asignacion(models.Model):
+#     proyecto = models.OneToOneField(
+#         'Proyectos', 
+#         on_delete=models.CASCADE, 
+#         primary_key=True, 
+#         to_field='datos_ingreso',
+#         verbose_name="Proyecto Asociado"
+#     )
+#     gestion = models.CharField(max_length=100, verbose_name="Gestión")
+#     tecnico_asignado = models.ForeignKey('Tecnicos', on_delete=models.CASCADE, verbose_name="Técnico Asignado")
+#     fecha_asignacion = models.DateField(verbose_name="Fecha de Asignación")
+#     class Meta:
+#         db_table = "Asignacion_proyectos"
+#     def __str__(self):
+#         return f"Asignación de Proyecto {self.proyecto.datos_ingreso.nombre}"
