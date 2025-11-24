@@ -193,7 +193,7 @@ class IngresoProyectoSerializer(serializers.ModelSerializer):
 
 		return instance
 
-
+##################
 class ProyectosSerializer(serializers.ModelSerializer):
 	datos_ingreso = IngresoProyectoSerializer(read_only=True)
 	datos_ingreso_id = serializers.PrimaryKeyRelatedField(
@@ -201,7 +201,8 @@ class ProyectosSerializer(serializers.ModelSerializer):
 		queryset=IngresoProyecto.objects.all(),
 		write_only=True,
 	)
-
+	# Hacemos que estado_actual y nombre no sean requeridos en la entrada, ya que se generan en el create.
+	estado_actual = serializers.CharField(required=False, allow_blank=True)
 	# Related OneToOne objects (opcionales en la entrada)
 	cable = CableSerializer(required=False)
 	caja_empalme = CajaEmpalmeSerializer(required=False)
@@ -217,7 +218,10 @@ class ProyectosSerializer(serializers.ModelSerializer):
 		caja_data = validated_data.pop('caja_empalme', None)
 		reserva_data = validated_data.pop('reserva', None)
 		nap_data = validated_data.pop('nap', None)
-
+		ingreso_proyecto_obj = validated_data['datos_ingreso']
+		# if ingreso_proyecto_obj.estado_ingreso != "En_proceso":
+		# 	validated_data['estado_actual'] = ingreso_proyecto_obj.estado_ingreso
+		#elif ingreso_proyecto_obj.
 		with transaction.atomic():
 			proyecto = Proyectos.objects.create(**validated_data)
 
@@ -241,7 +245,9 @@ class ProyectosSerializer(serializers.ModelSerializer):
 				Nap.objects.create(proyecto=proyecto, **nap_data)
 			else:
 				Nap.objects.create(proyecto=proyecto)
-
+		# Crear estado_actual
+        
+        
 		return proyecto
 
 	def update(self, instance, validated_data):
