@@ -77,7 +77,7 @@ class IngresoProyecto(models.Model):
     class Meta:
         db_table = "ingreso_proyecto"
     def __str__(self):
-        return self.nombre
+        return self.OT_AIRE
     
 class Cable(models.Model):
     # La clave OneToOneField asegura que solo haya un registro de Cable por Contrato
@@ -174,5 +174,5 @@ class Proyectos(models.Model):
     class Meta:
         db_table = "Proyectos"
     def __str__(self):
-        return f"Proyecto {self.datos_ingreso.nombre}"
+        return f"Proyecto {self.datos_ingreso.OT_AIRE}"
     
