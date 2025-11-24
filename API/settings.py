@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'facturacion',
     'proyectos',
     'authentication',
+    'inspectores',
     'corsheaders',
 ]
 

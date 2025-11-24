@@ -1,5 +1,6 @@
 from django.db import models
 from cableoperadores.models import Cableoperadores
+from inspectores.models import Inspectores
 # Create your models here.
 # Tipo de ingreso del proyecto
 class AlturaInicialPoste(models.Model):
@@ -160,6 +161,13 @@ class Nap(models.Model):
 
 class Proyectos(models.Model):
     datos_ingreso = models.ForeignKey(IngresoProyecto, on_delete=models.CASCADE, to_field='OT_AIRE', db_column='datos_ingreso_id', primary_key=True)
+    inspector_responsable = models.ForeignKey(
+        Inspectores, 
+        on_delete=models.SET_NULL, # O CASCADE, dependiendo de tu lógica
+        null=True, 
+        blank=True,
+        verbose_name="Inspector Responsable"
+    )
     estado_actual = models.CharField(max_length=100)
     fecha_inspeccion = models.DateField()
     fecha_analisis_inspeccion = models.DateField()
@@ -168,18 +176,3 @@ class Proyectos(models.Model):
     def __str__(self):
         return f"Proyecto {self.datos_ingreso.nombre}"
     
-# class Asignacion(models.Model):
-#     proyecto = models.OneToOneField(
-#         'Proyectos', 
-#         on_delete=models.CASCADE, 
-#         primary_key=True, 
-#         to_field='datos_ingreso',
-#         verbose_name="Proyecto Asociado"
-#     )
-#     gestion = models.CharField(max_length=100, verbose_name="Gestión")
-#     tecnico_asignado = models.ForeignKey('Tecnicos', on_delete=models.CASCADE, verbose_name="Técnico Asignado")
-#     fecha_asignacion = models.DateField(verbose_name="Fecha de Asignación")
-#     class Meta:
-#         db_table = "Asignacion_proyectos"
-#     def __str__(self):
-#         return f"Asignación de Proyecto {self.proyecto.datos_ingreso.nombre}"
