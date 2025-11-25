@@ -42,6 +42,7 @@ ESTADO = [
         ('rechazado_GD', 'Rechazado GD'),
         ('incluir_contrato', 'Incluir en Contrato'),
         ('negado', 'Negado'),
+        ('aprobado', 'Aprobado'),
 ]
 # Choices para departamentos
 DEPARTAMENTOS = [
@@ -159,6 +160,11 @@ class Nap(models.Model):
     class Meta:
         db_table = "Naps_proyectos"
 
+ESTADO_INICIAL = [
+    ('gesionar_escritorio','Gestionar desde Escritorio'),
+    ('gesionar_sitio','Gestionar in Sitio'),
+]
+
 class Proyectos(models.Model):
     datos_ingreso = models.ForeignKey(IngresoProyecto, on_delete=models.CASCADE, to_field='OT_AIRE', db_column='datos_ingreso_id', primary_key=True)
     inspector_responsable = models.ForeignKey(
@@ -168,9 +174,12 @@ class Proyectos(models.Model):
         blank=True,
         verbose_name="Inspector Responsable"
     )
+    estado_inicial = models.CharField(max_length=100, choices=ESTADO_INICIAL, default='gesionar_escritorio')
     estado_actual = models.CharField(max_length=100)
-    fecha_inspeccion = models.DateField()
-    fecha_analisis_inspeccion = models.DateField()
+    fecha_inspeccion = models.DateField(null=True, blank=True)
+    fecha_analisis_inspeccion = models.DateField(null=True, blank=True)
+    fecha_entrega_pj = models.DateField(null=True, blank=True)
+    fecha_notificacion_prst = models.DateField(null=True, blank=True)
     class Meta:
         db_table = "Proyectos"
     def __str__(self):

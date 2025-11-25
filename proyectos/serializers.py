@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import *
 from django.db import transaction
-from cableoperadores.serializers import CableoperadoresSerializer
+from cableoperadores.serializers import CableoperadoresSerializer, UserSerializer
+from inspectores.serializers import InspectoresSerializer
 from cableoperadores.models import Cableoperadores
 from datetime import datetime
 
@@ -208,7 +209,7 @@ class ProyectosSerializer(serializers.ModelSerializer):
 	caja_empalme = CajaEmpalmeSerializer(required=False)
 	reserva = ReservaSerializer(required=False)
 	nap = NapSerializer(required=False)
-
+	inspector_responsable = InspectoresSerializer(read_only=True)
 	class Meta:
 		model = Proyectos
 		fields = '__all__'
@@ -219,9 +220,7 @@ class ProyectosSerializer(serializers.ModelSerializer):
 		reserva_data = validated_data.pop('reserva', None)
 		nap_data = validated_data.pop('nap', None)
 		ingreso_proyecto_obj = validated_data['datos_ingreso']
-		# if ingreso_proyecto_obj.estado_ingreso != "En_proceso":
-		# 	validated_data['estado_actual'] = ingreso_proyecto_obj.estado_ingreso
-		#elif ingreso_proyecto_obj.
+		validated_data['estado_actual'] = ingreso_proyecto_obj.estado_ingreso.replace('_', ' ')
 		with transaction.atomic():
 			proyecto = Proyectos.objects.create(**validated_data)
 
@@ -255,7 +254,25 @@ class ProyectosSerializer(serializers.ModelSerializer):
 		caja_data = validated_data.pop('caja_empalme', None)
 		reserva_data = validated_data.pop('reserva', None)
 		nap_data = validated_data.pop('nap', None)
-
+		# Actualizacion de estado
+		ingreso_proyecto_obj = validated_data['datos_ingreso']
+		validated_data['estado_actual'] = ingreso_proyecto_obj.estado_ingreso.replace('_', ' ')
+		if validated_data['estado_actual'] == 'En proceso':
+			if validated_data['fecha_notificacion_prst']:
+				validated_data['estado_actual'] = 'Aprobado'
+				ingreso_proyecto_obj.estado_ingreso = 'aprobado'
+				ingreso_proyecto_obj.save()
+			elif validated_data['fecha_analisis_inspeccion']:
+				validated_data['estado_actual'] = 'Analisis de inspeccion realizado'
+			elif validated_data['fecha_inspeccion']:
+				validated_data['estado_actual'] += ' Por analizar inspeccion'
+			elif validated_data['fecha_entrega_pj']:
+				validated_data['estado_actual'] += ' Por generacion de informe'
+			elif validated_data['estado_inicial'] == 'gesionar_escritorio':
+				validated_data['estado_actual'] += ' de analisis de escritorio'
+			elif validated_data['estado_inicial'] == 'gesionar_sitio':
+				validated_data['estado_actual'] += ' Por enviar a terreno'
+				
 		# Actualizar FK datos_ingreso si se envió
 		if 'datos_ingreso' in validated_data:
 			new_di = validated_data.pop('datos_ingreso')
