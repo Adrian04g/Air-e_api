@@ -11,7 +11,7 @@ from django.core.cache import cache # ¡IMPORTANTE para invalidar el caché!
 # Create your views here.
 
 class IngresoProyectoView(generics.ListCreateAPIView):
-    queryset = IngresoProyecto.objects.all()
+    queryset = IngresoProyecto.objects.all().order_by('-fecha_radicacion_prst')
     serializer_class = IngresoProyectoSerializer
 
 class SingleIngresoProyectoView(generics.RetrieveUpdateDestroyAPIView):
@@ -25,3 +25,7 @@ class ProyectosView(generics.ListCreateAPIView):
 class SingleProyectoView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Proyectos.objects.all()
     serializer_class = ProyectosSerializer
+
+class IngresosNoVinculadosListView(generics.ListAPIView):
+    queryset = IngresoProyecto.objects.filter(proyectos__isnull=True)
+    serializer_class = IngresoProyectoSerializer

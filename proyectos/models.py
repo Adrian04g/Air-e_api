@@ -189,8 +189,8 @@ class AlturaFinalPoste(models.Model):
         verbose_name="Ingrese cantidad de Poste de Altura 16", default=0
     )
 ESTADO_INICIAL = [
-    ('gesionar_escritorio','Gestionar desde Escritorio'),
-    ('gesionar_sitio','Gestionar in Sitio'),
+    ('gestionar_escritorio','Gestionar desde Escritorio'),
+    ('gestionar_sitio','Gestionar in Sitio'),
 ]
 
 class Proyectos(models.Model):
@@ -200,7 +200,8 @@ class Proyectos(models.Model):
         on_delete=models.SET_NULL, # O CASCADE, dependiendo de tu lógica
         null=True, 
         blank=True,
-        verbose_name="Inspector Responsable"
+        verbose_name="Inspector Responsable",
+        related_name='proyectos'
     )
     estado_inicial = models.CharField(max_length=100, choices=ESTADO_INICIAL, default='gesionar_escritorio')
     estado_actual = models.CharField(max_length=100)
