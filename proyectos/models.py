@@ -160,13 +160,41 @@ class Nap(models.Model):
     class Meta:
         db_table = "Naps_proyectos"
 
+class AlturaFinalPoste(models.Model):
+    proyecto = models.OneToOneField(
+        'Proyectos',
+        on_delete=models.CASCADE,
+        primary_key=True,
+        verbose_name="Proyecto"
+    )  # , related_name="altura_inicial_poste")
+    tipo8 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 8", default=0
+    )
+    tipo9 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 9", default=0
+    )
+    tipo10 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 10", default=0
+    )
+    tipo11 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 11", default=0
+    )
+    tipo12 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 12", default=0
+     )
+    tipo14 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 14", default=0
+    )
+    tipo16 = models.IntegerField(
+        verbose_name="Ingrese cantidad de Poste de Altura 16", default=0
+    )
 ESTADO_INICIAL = [
     ('gesionar_escritorio','Gestionar desde Escritorio'),
     ('gesionar_sitio','Gestionar in Sitio'),
 ]
 
 class Proyectos(models.Model):
-    datos_ingreso = models.ForeignKey(IngresoProyecto, on_delete=models.CASCADE, to_field='OT_AIRE', db_column='datos_ingreso_id', primary_key=True)
+    datos_ingreso = models.OneToOneField(IngresoProyecto, on_delete=models.CASCADE, to_field='OT_AIRE', db_column='datos_ingreso_id', primary_key=True)
     inspector_responsable = models.ForeignKey(
         Inspectores, 
         on_delete=models.SET_NULL, # O CASCADE, dependiendo de tu lógica

@@ -4,7 +4,7 @@ from django.db import transaction
 from cableoperadores.serializers import CableoperadoresSerializer, UserSerializer
 from inspectores.serializers import InspectoresSerializer
 from cableoperadores.models import Cableoperadores
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 class CajaEmpalmeSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -194,6 +194,11 @@ class IngresoProyectoSerializer(serializers.ModelSerializer):
 
 		return instance
 
+class AlturaFinalPosteSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = AlturaFinalPoste
+		fields = ['tipo8','tipo9','tipo10','tipo11','tipo12','tipo14','tipo16']
+
 ##################
 class ProyectosSerializer(serializers.ModelSerializer):
 	datos_ingreso = IngresoProyectoSerializer(read_only=True)
@@ -209,16 +214,54 @@ class ProyectosSerializer(serializers.ModelSerializer):
 	caja_empalme = CajaEmpalmeSerializer(required=False)
 	reserva = ReservaSerializer(required=False)
 	nap = NapSerializer(required=False)
+	# Altura final del poste: nested serializer (source -> alturafinalposte reverse relation)
+	altura_final_poste = AlturaFinalPosteSerializer(required=False, allow_null=True, source='alturafinalposte')
 	inspector_responsable = InspectoresSerializer(read_only=True)
+	dias_antiguedad = serializers.SerializerMethodField(read_only=True)
+	dias_respuesta = serializers.SerializerMethodField(read_only=True)
 	class Meta:
 		model = Proyectos
 		fields = '__all__'
 
+	def to_representation(self, instance):
+		"""Asegura que siempre devuelva un objeto con valores por defecto si no existe la relación"""
+		data = super().to_representation(instance)
+		# Si alt final fue None, crear un registro por defecto y serializarlo
+		if data.get('altura_final_poste') is None:
+			alp, created = AlturaFinalPoste.objects.get_or_create(proyecto=instance)
+			data['altura_final_poste'] = AlturaFinalPosteSerializer(alp).data
+		return data
+
+	def get_dias_antiguedad(self, obj):
+		fecha_actual = date.today()
+		if obj.fecha_notificacion_prst:
+			return None
+		elif obj.fecha_inspeccion:
+			delta = fecha_actual - obj.fecha_inspeccion
+			return delta.days
+		return 0
+	# Se calcula los dias habiles (solo contara dias de lunes a viernes)
+	def get_dias_respuesta(self, obj):
+		dias_habiles = 0
+		if obj.fecha_notificacion_prst and obj.datos_ingreso.fecha_radicacion_prst:
+			while obj.datos_ingreso.fecha_radicacion_prst <= obj.fecha_notificacion_prst:
+				dia_semana = obj.datos_ingreso.fecha_radicacion_prst.weekday()
+
+				if dia_semana < 5:
+					dias_habiles += 1
+				obj.datos_ingreso.fecha_radicacion_prst += timedelta(days=1)
+			# Aquí deberías devolver el conteo de días hábiles
+			return dias_habiles
+		else:
+			return None
+		
 	def create(self, validated_data):
 		cable_data = validated_data.pop('cable', None)
 		caja_data = validated_data.pop('caja_empalme', None)
 		reserva_data = validated_data.pop('reserva', None)
 		nap_data = validated_data.pop('nap', None)
+		# admitir tanto el nombre de campo enviado como el source del serializer
+		altura_final_poste_data = validated_data.pop('alturafinalposte', validated_data.pop('altura_final_poste', None))
 		ingreso_proyecto_obj = validated_data['datos_ingreso']
 		validated_data['estado_actual'] = ingreso_proyecto_obj.estado_ingreso.replace('_', ' ')
 		with transaction.atomic():
@@ -244,6 +287,10 @@ class ProyectosSerializer(serializers.ModelSerializer):
 				Nap.objects.create(proyecto=proyecto, **nap_data)
 			else:
 				Nap.objects.create(proyecto=proyecto)
+			if altura_final_poste_data:
+				AlturaFinalPoste.objects.create(proyecto=proyecto, **altura_final_poste_data)
+			else:
+				AlturaFinalPoste.objects.create(proyecto=proyecto)
 		# Crear estado_actual
         
         
@@ -254,6 +301,7 @@ class ProyectosSerializer(serializers.ModelSerializer):
 		caja_data = validated_data.pop('caja_empalme', None)
 		reserva_data = validated_data.pop('reserva', None)
 		nap_data = validated_data.pop('nap', None)
+		altura_final_poste_data = validated_data.pop('alturafinalposte', validated_data.pop('altura_final_poste', None))
 		# Actualizacion de estado
 		ingreso_proyecto_obj = validated_data['datos_ingreso']
 		validated_data['estado_actual'] = ingreso_proyecto_obj.estado_ingreso.replace('_', ' ')
@@ -320,7 +368,14 @@ class ProyectosSerializer(serializers.ModelSerializer):
 				nap_inst.save()
 			except Nap.DoesNotExist:
 				Nap.objects.create(proyecto=instance, **nap_data)
-
+		if altura_final_poste_data:
+			try:
+				altura_final_poste_inst = instance.alturafinalposte
+				for attr, value in altura_final_poste_data.items():
+					setattr(altura_final_poste_inst, attr, value)
+				altura_final_poste_inst.save()
+			except AlturaFinalPoste.DoesNotExist:
+				AlturaFinalPoste.objects.create(proyecto=instance, **altura_final_poste_data)
 		return instance
 
 	def validate(self, data):

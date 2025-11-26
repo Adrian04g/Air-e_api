@@ -30,7 +30,7 @@ class NapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nap
         fields = '__all__'
-        #read_only_fields = ['contrato']
+        read_only_fields = ['contrato']
 
 
 class ContratoSerializer(serializers.ModelSerializer):
