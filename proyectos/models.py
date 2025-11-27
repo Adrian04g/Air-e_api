@@ -150,13 +150,13 @@ class Nap(models.Model):
         to_field='datos_ingreso',
         verbose_name="Proyecto Asociado"
     )
-    tip8 = models.PositiveIntegerField(verbose_name="8 metros", default=0)
-    tip10 = models.PositiveIntegerField(verbose_name="10 metros", default=0)
-    tip12 = models.PositiveIntegerField(verbose_name="12 metros", default=0)
-    tip14 = models.PositiveIntegerField(verbose_name="14 metros", default=0)
-    tip15 = models.PositiveIntegerField(verbose_name="15 metros", default=0)
-    tip16 = models.PositiveIntegerField(verbose_name="16 metros", default=0)
-    tip20 = models.PositiveIntegerField(verbose_name="20 metros", default=0)
+    tipo8 = models.PositiveIntegerField(verbose_name="8 metros", default=0)
+    tipo10 = models.PositiveIntegerField(verbose_name="10 metros", default=0)
+    tipo12 = models.PositiveIntegerField(verbose_name="12 metros", default=0)
+    tipo14 = models.PositiveIntegerField(verbose_name="14 metros", default=0)
+    tipo15 = models.PositiveIntegerField(verbose_name="15 metros", default=0)
+    tipo16 = models.PositiveIntegerField(verbose_name="16 metros", default=0)
+    tipo20 = models.PositiveIntegerField(verbose_name="20 metros", default=0)
     class Meta:
         db_table = "Naps_proyectos"
 
