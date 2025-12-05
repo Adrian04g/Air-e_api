@@ -87,6 +87,7 @@ CLASIFICACION = [
 ESTADOS_CONTRATO = [
     ('Vigente' , 'Vigente'),
     ('Vencido' , 'Vencido'),
+    ('Pendiente' , 'Pendiente'),
 ]
 TIPO_FECHA_RADICACION_CONTRATO = [
     ('fija' , 'Fija'),
@@ -118,8 +119,8 @@ class Contratos(models.Model):
     cableoperador = models.ForeignKey(Cableoperadores, on_delete=models.PROTECT)
     estado_contrato = models.CharField(max_length=100, choices=ESTADOS_CONTRATO, verbose_name="Estado de Contrato")
     duracion_anos = models.IntegerField(verbose_name="Duración en años", default=0)
-    inicio_vigencia = models.DateField()
-    fin_vigencia = models.DateField()
+    inicio_vigencia = models.DateField(blank=True, null=True)
+    fin_vigencia = models.DateField(blank=True, null=True)
     valor_contrato = models.DecimalField(max_digits=20, decimal_places=2, verbose_name="Valor del Contrato", default=0)
     # Campos para la Póliza de Cumplimiento
     numero_poliza_cumplimiento = models.CharField(max_length=100, blank=True, null=True, verbose_name="Número de Póliza")
@@ -145,8 +146,8 @@ class Contratos(models.Model):
     expedicion_poliza_rce = models.DateField(blank=True, null=True, verbose_name="Expedición de Póliza")
     tomador = models.CharField(max_length=100, blank=True, null=True, verbose_name="Tomador")
     aseguradora = models.CharField(max_length=100, blank=True, null=True, verbose_name="Aseguradora")
-    fecha_radicacion = models.IntegerField(verbose_name="Fecha de Radicación")
-    tipo_fecha_radicacion = models.CharField(max_length=100, choices=TIPO_FECHA_RADICACION_CONTRATO, verbose_name="Tipo de Fecha de Radicación")
+    fecha_radicacion = models.CharField(max_length=100, verbose_name="Fecha de Radicación", blank=True, null=True)
+    tipo_fecha_radicacion = models.CharField(max_length=100, choices=TIPO_FECHA_RADICACION_CONTRATO, verbose_name="Tipo de Fecha de Radicación", blank=True, null=True)
     fecha_preliquidacion = models.DateField(blank=True, null=True, verbose_name="Fecha de Preliquidación")
     def clean(self):
         """

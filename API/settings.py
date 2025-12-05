@@ -138,7 +138,15 @@ load_dotenv()
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# import dj_database_url
+# from decouple import config # Si usas python-decouple
 
+# # Opción A: Usando URL string (Recomendado para Supabase)
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=config('DATABASE_URL')
+#     )
+# }
 CACHES = {
     'default': {
         # SOLUCIÓN AL ERROR: Usamos FileBasedCache para estabilidad. 

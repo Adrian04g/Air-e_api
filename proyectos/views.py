@@ -21,7 +21,9 @@ class SingleIngresoProyectoView(generics.RetrieveUpdateDestroyAPIView):
 class ProyectosView(generics.ListCreateAPIView):
     queryset = Proyectos.objects.all()
     serializer_class = ProyectosSerializer
-    
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = [ 'datos_ingreso__OT_AIRE', 'datos_ingreso__nombre', 'estado_actual', 'estado_inicial', 'datos_ingreso__cableoperador__nombre']
+    ordering_fields = ['datos_ingreso__OT_AIRE', 'datos_ingreso__nombre', 'estado_actual', 'estado_inicial', 'datos_ingreso__cableoperador__nombre']
 class SingleProyectoView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Proyectos.objects.all()
     serializer_class = ProyectosSerializer
