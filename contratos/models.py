@@ -103,14 +103,12 @@ VIGENCIA_AMPARO_CHOICES = [
     ('Igual_a_Duracion_de_Contrato_mas_4_Meses' , 'Igual a Duración de Contrato + 4 Meses'),
     ('Igual_a_Duracion_de_Contrato_mas_2_Meses' , 'Igual a Duración de Contrato + 2 Meses'),
 ]
-MONTO_ASEGURADO_POLIZA_CUMPLIMIENTO_CHOICES = [
+MONTO_ASEGURADO_POLIZA_CHOICES = [
     ('15%_valor_contrato', '15% Valor del Contrato'),
     ('20%_valor_contrato', '20% Valor del Contrato'),
     ('30%_valor_contrato', '30% Valor del Contrato'),
     ('20%_valor_base_constitucion_poliza', '20% Valor base de Constitución de Póliza'),
     ('30%_valor_base_constitucion_poliza', '30% Valor base de Constitución de Póliza'),
-]
-MONTO_ASEGURADO_POLIZA_RCE_CHOICES = [
     ('no_inferior_100_SMLMV', 'No inferior a 100 SMLMV'),
     ('no_inferior_200_SMLMV', 'No inferior a 200 SMLMV'),
     ('no_inferior_300_SMLMV', 'No inferior a 300 SMLMV'),
@@ -127,7 +125,7 @@ class Contratos(models.Model):
     vigencia_amparo_poliza_cumplimiento = models.CharField(max_length=100, blank=True, null=True, choices=VIGENCIA_AMPARO_CHOICES, verbose_name="Vigencia de Amparo")
     inicio_vigencia_poliza_cumplimiento = models.DateField(blank=True, null=True, verbose_name="Inicio de Vigencia")
     fin_vigencia_poliza_cumplimiento = models.DateField(blank=True, null=True, verbose_name="Fin de Vigencia")
-    monto_asegurado_poliza_cumplimiento = models.CharField(max_length=100, blank=True, null=True, choices=MONTO_ASEGURADO_POLIZA_CUMPLIMIENTO_CHOICES, verbose_name="Monto Asegurado")
+    monto_asegurado_poliza_cumplimiento = models.CharField(max_length=100, blank=True, null=True, choices=MONTO_ASEGURADO_POLIZA_CHOICES, verbose_name="Monto Asegurado")
     valor_monto_asegurado_poliza_cumplimiento = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True, verbose_name="Valor del Monto Asegurado")
     valor_asegurado_poliza_cumplimiento = models.CharField(max_length=100, blank=True, null=True, verbose_name="Valor Asegurado")
     inicio_amparo_poliza_cumplimiento = models.DateField(blank=True, null=True, verbose_name="Inicio de Amparo")
@@ -138,7 +136,7 @@ class Contratos(models.Model):
     vigencia_amparo_poliza_rce = models.CharField(max_length=100, blank=True, null=True, choices=VIGENCIA_AMPARO_CHOICES, verbose_name="Vigencia de Amparo")
     inicio_vigencia_poliza_rce = models.DateField(blank=True, null=True, verbose_name="Inicio de Vigencia")
     fin_vigencia_poliza_rce = models.DateField(blank=True, null=True, verbose_name="Fin de Vigencia")
-    monto_asegurado_poliza_rce = models.CharField(max_length=100, blank=True, null=True, choices=MONTO_ASEGURADO_POLIZA_RCE_CHOICES, verbose_name="Monto Asegurado")
+    monto_asegurado_poliza_rce = models.CharField(max_length=100, blank=True, null=True, choices=MONTO_ASEGURADO_POLIZA_CHOICES, verbose_name="Monto Asegurado")
     valor_monto_asegurado_poliza_rce = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True, verbose_name="Valor del Monto Asegurado")
     valor_asegurado_poliza_rce = models.CharField(max_length=100, blank=True, null=True, verbose_name="Valor Asegurado")
     inicio_amparo_poliza_rce = models.DateField(blank=True, null=True, verbose_name="Inicio de Amparo")
