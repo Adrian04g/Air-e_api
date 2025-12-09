@@ -28,9 +28,9 @@ class Facturacion(models.Model):
         default='Pendiente',
         verbose_name='Estado de Pago'
     )
-    monto_total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Monto Total', default=0.00)
+    #monto_total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Monto Total', default=0.00)
     # Este campo se calcula dinámicamente o se actualiza al registrar pagos
-    monto_pendiente = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name='Monto Pendiente')
+    #monto_pendiente = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name='Monto Pendiente')
     # Factura_aceptada = models.CharField(max_length=50,choices=SI_NO, verbose_name='Factura aceptada')
     # Factura_vencida = models.CharField(max_length=50,choices=SI_NO, verbose_name='Vencida')
     # Factura_CRC = models.CharField(max_length=50,choices=SI_NO,  verbose_name='Facturado CRC')
