@@ -13,7 +13,16 @@ class FacturaSerializer(serializers.ModelSerializer):
     monto_pagado = serializers.SerializerMethodField()
     estado = serializers.SerializerMethodField()
     #cableoperador = serializers.CharField(source='contratos.cableoperador.nombre', read_only=True)
-    cableoperador = CableoperadoresSerializer(source='contratos.cableoperador', read_only=True)
+    # Representación completa en la respuesta
+    cableoperador = CableoperadoresSerializer(read_only=True)
+    # Permitir enviar solo el ID del cable-operador al crear/actualizar
+    cableoperador_id = serializers.PrimaryKeyRelatedField(
+        source='cableoperador',
+        queryset=Cableoperadores.objects.all(),
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
     # Mostrar todos los registros de pago anidados
     pagos = RegistroPagoSerializer(many=True, read_only=True) 
     monto_pendiente = serializers.SerializerMethodField()

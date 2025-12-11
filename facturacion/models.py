@@ -7,7 +7,7 @@ SI_NO = [
     ('no' , 'No'),
 ]
 class Facturacion(models.Model):
-    contratos = models.ForeignKey(Contratos, on_delete=models.CASCADE)
+    cableoperador = models.ForeignKey(Cableoperadores, on_delete=models.CASCADE, default=1)
     Mes_uso = models.DateField(verbose_name='Mes de Uso')
     Fecha_facturacion = models.DateField(verbose_name='Fecha de Facturación')
     Num_factura = models.CharField(max_length=50, verbose_name='Número de Factura')
@@ -48,7 +48,7 @@ class Facturacion(models.Model):
     
     
     def __str__(self):
-        return f"Factura {self.Num_factura} - {self.contratos.cableoperador.nombre} - {self.pk}"
+        return f"Factura {self.Num_factura} - {self.cableoperador.nombre} - {self.pk}"
     class Meta:
         db_table = 'Facturacion'
         
