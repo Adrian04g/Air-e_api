@@ -115,7 +115,13 @@ class ContratoViewSet(generics.ListCreateAPIView):
         instance = serializer.save()
         invalidate_list_cache(CONTRATOS_LIST_CACHE_KEY)
         return instance
-
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        invalidate_list_cache(CONTRATOS_LIST_CACHE_KEY)
+        return instance
+    def perform_destroy(self, instance):
+        instance.delete()
+        invalidate_list_cache(CONTRATOS_LIST_CACHE_KEY)
 
 class ContratoDetailViewSet(generics.RetrieveUpdateDestroyAPIView):
     queryset = Contratos.objects.all()

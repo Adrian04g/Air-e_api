@@ -28,15 +28,13 @@ class Facturacion(models.Model):
         default='Pendiente',
         verbose_name='Estado de Pago'
     )
+    Factura_aceptada = models.BooleanField(default=True, verbose_name='Factura Aceptada')
+    Factura_CRC = models.BooleanField(default=False, verbose_name='Factura CRC')
+    Fecha_aplicacion = models.DateField(max_length=50, verbose_name='Fecha de aplicacion', blank=True, null=True)
+    Fecha_confirmacion = models.DateField(blank=True, null=True, verbose_name='Fecha de confirmacion')
     #monto_total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Monto Total', default=0.00)
     # Este campo se calcula dinámicamente o se actualiza al registrar pagos
     #monto_pendiente = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name='Monto Pendiente')
-    # Factura_aceptada = models.CharField(max_length=50,choices=SI_NO, verbose_name='Factura aceptada')
-    # Factura_vencida = models.CharField(max_length=50,choices=SI_NO, verbose_name='Vencida')
-    # Factura_CRC = models.CharField(max_length=50,choices=SI_NO,  verbose_name='Facturado CRC')
-    # Valor_pagado = models.FloatField(verbose_name='Valor Pagado')
-    # Fecha_aplicacion = models.DateField(max_length=50, verbose_name='Fecha de aplicacion')
-    # Fecha_confirmacion = models.DateField(blank=True, null=True, verbose_name='Fecha de confirmacion')
     # Valor_deuda = models.FloatField(verbose_name='Valor deuda')
     # Pagado = models.CharField(max_length=50,choices=SI_NO, verbose_name='Pagado?')
     # Observciones = models.TextField(blank=True, null=True, verbose_name='Observaciones')

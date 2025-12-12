@@ -3,7 +3,7 @@ from .models import *
 from django.db import transaction
 from cableoperadores.serializers import *
 from cableoperadores.models import Cableoperadores
-
+from datetime import datetime, date, timedelta
 
 class CajaEmpalmeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,7 +34,7 @@ class NapSerializer(serializers.ModelSerializer):
 
 
 class ContratoSerializer(serializers.ModelSerializer):
-    estado_display = serializers.CharField(source='get_estado_display', read_only=True)
+    estado_display = serializers.CharField(source='get_estado_contrato_display', read_only=True)
     nap = NapSerializer(required=False)
     reserva = ReservaSerializer(required=False)
     caja_empalme = CajaEmpalmeSerializer(required=False)
@@ -49,12 +49,21 @@ class ContratoSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
-
+    estado_actual = serializers.SerializerMethodField()
     class Meta:
         model = Contratos
         fields = '__all__'
-        read_only_fields = ['estado_display']
-
+        read_only_fields = ['get_estado_contrato_display']
+    def get_estado_actual(self, obj):
+        fecha_actual = datetime.now().date()
+        if obj.fin_vigencia < fecha_actual:
+            obj.estado_contrato = 'Vencido'
+            obj.save()
+            return 'Vencido'
+        elif obj.inicio_vigencia <= fecha_actual <= obj.fin_vigencia:
+            # obj.estado_contrato = 'Vigente'
+            # obj.estado_contrato.save()
+            return 'Vigente'
     def create(self, validated_data):
         nap_data = validated_data.pop('nap', None)
         cable_data = validated_data.pop('cable', None)
