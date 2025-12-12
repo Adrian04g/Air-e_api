@@ -56,7 +56,7 @@ class registro_pago(models.Model):
     facturacion = models.ForeignKey(Facturacion, related_name='pagos', on_delete=models.CASCADE)
     fecha_pago = models.DateField(verbose_name='Fecha pago')
     periodo_pago = models.DateField(verbose_name='Periodo pago')
-    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2)
+    monto_pagado = models.DecimalField(max_digits=20, decimal_places=2)
     observaciones = models.TextField(blank=True, null=True)
 
     def __str__(self):
